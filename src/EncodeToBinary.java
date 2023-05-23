@@ -6,12 +6,12 @@ import static common.Core.*;
 public class EncodeToBinary {
 
     public static void main(String[] args) {
-        String inputFilePath = getInputFilePath();
-        String outputFilePath = getOutputFilePath("eid_tags_compressed.bin");
+        String inputFilePath = getOriginalFile();
+        String outputFilePath = getEncodedFile();
 
         try (
                 BufferedReader br = new BufferedReader(new FileReader(inputFilePath));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath))
+                DataOutputStream os = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFilePath)))
         ) {
             String line;
             final long startTime = System.nanoTime();
@@ -25,16 +25,16 @@ public class EncodeToBinary {
                 int topicLength = topic.length();
 
                 StringTokenizer tagsTokenizer = new StringTokenizer(tags, ",");
-                int tagsLength = tagsTokenizer.countTokens();
+                int tagLength = tagsTokenizer.countTokens();
 
                 // Write topic and tag length for decode
-                bw.write(topicLength);
-                bw.write(tagsLength);
+                os.writeByte(topicLength);
+                os.writeByte(tagLength);
 
                 // Write topic
-                bw.write(topic);
+                os.writeChars(topic);
 
-                int[] tagTokens = new int[tagsLength];
+                int[] tagTokens = new int[tagLength];
                 int i = 0;
 
                 while (tagsTokenizer.hasMoreTokens()) {
@@ -47,16 +47,16 @@ public class EncodeToBinary {
 
                 // Write tag
                 for (int v : encodedTag) {
-                    if (v != 0) bw.write(v);
+                    if (v != 0) os.writeByte(v);
                 }
             }
 
-            bw.flush();
+            os.flush();
 
             final long endTime = System.nanoTime();
-            System.out.println("Completed compression eid_tags_gap_vb.txt file. Total execution time: " + (endTime - startTime) / 1000000 + "ms");
+            System.out.println("[Encoding Completed] eid_tags.txt => eid_tags_encoded.bin\nTotal execution time: " + (endTime - startTime) / 1000000 + "ms");
         } catch (IOException e) {
-            System.out.println("파일 읽기에 실패했습니다. Cause: " + e.getMessage());
+            System.out.println("파일 읽기/쓰기에 실패했습니다. Cause: " + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("데이터 형식이 유효하지 않습니다. Cause: " + e.getMessage());
         }

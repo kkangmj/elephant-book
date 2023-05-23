@@ -5,14 +5,20 @@ import java.io.File;
 public class Core {
 
     private final static String BASE_PATH = "src/resources/";
-    private final static String INPUT_FILE = "eid_tags.txt";
+    private final static String ORIGINAL_FILE = "eid_tags.txt";
+    private final static String ENCODED_FILE = "eid_tags_encoded.bin";
+    private final static String DECODED_FILE = "eid_tags_decoded.txt";
 
-    public static String getInputFilePath() {
-        return new File(BASE_PATH + INPUT_FILE).getAbsolutePath();
+    public static String getOriginalFile() {
+        return new File(BASE_PATH + ORIGINAL_FILE).getAbsolutePath();
     }
 
-    public static String getOutputFilePath(String fileName) {
-        return new File(BASE_PATH + fileName).getAbsolutePath();
+    public static String getEncodedFile() {
+        return new File(BASE_PATH + ENCODED_FILE).getAbsolutePath();
+    }
+
+    public static String getDecodedFile() {
+        return new File(BASE_PATH + DECODED_FILE).getAbsolutePath();
     }
 
     public static int[] encode(int[] tags) {
